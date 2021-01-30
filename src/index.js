@@ -10,6 +10,13 @@ const multer = require('multer')
 const upload = multer({dest: "uploads/"})
 // Require path module which is built into Node.js
 const path = require('path')
+// Import package axious for Imagga
+const axios = require('axios') // got is trash
+
+
+// Require env npm package so I can get API key from env file
+require('dotenv').config()
+
 
 // import image model 
 const Image = require('./models/image.js');
@@ -37,7 +44,7 @@ app.get('/images', async(req, res) => {
 })
 
 app.post('/image', upload.single("image"), 
-async (req, res) => {
+async (req, res, next) => {
   // can only have one res.send
   // req.file is the image details in JSON format
   // res.send(file)
@@ -47,8 +54,27 @@ async (req, res) => {
     path: file.path,
     mimetype: file.mimetype,
   })
+
   await Img.save()
+  req.img = Img;
+
   res.send("File uploaded successfully!")
+
+  next()
+},
+async (req, res) => {
+  try {
+    let res = await axios.get('https://api.imagga.com/v2/tags?image_url=http://9bb957177d88.ngrok.io/image/'+req.img._id,
+      {
+        auth: {
+          username: process.env.IMAGGA_API_KEY,
+          password: process.env.IMAGGA_API_SECRET 
+        }
+      });
+      console.log(res.data);
+  } catch (err) {
+    console.log(err);
+  }
 })
 
 

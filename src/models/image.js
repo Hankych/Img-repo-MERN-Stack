@@ -5,6 +5,7 @@ const imageSchema = new Schema({
   title:  String, // String is shorthand for {type: String}
   path: String,
   mimetype:   String,
+  tags: [{ref: "Tag", type: mongoose.Types.ObjectId}],
   date_created: {
       type: Date,
       default: Date.now()

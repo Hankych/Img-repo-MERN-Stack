@@ -1,6 +1,9 @@
 # Uploads
 uploads/*
 
+#ngrok
+ngrok.exe
+
 # Logs
 logs
 *.log
